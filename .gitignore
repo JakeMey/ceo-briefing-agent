@@ -1,0 +1,29 @@
+﻿# Virtual environment
+venv/
+env/
+ENV/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# API keys and secrets (CRITICAL)
+.env
+*.env
+config.py
+
+# Generated briefings
+briefing_*.md
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
