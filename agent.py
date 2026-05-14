@@ -1,28 +1,22 @@
 ﻿#!/usr/bin/env python3
 """
 CEO Daily Briefing Agent - Email Only Demo
-Fetches unread emails from Outlook, prioritises with Gemini API
-
-Setup:
-1. Copy .env.example to .env
-2. Add your GEMINI_API_KEY to .env
-3. Run: python agent.py
+Fetches unread emails from Outlook, prioritizes with Gemini (new SDK)
 """
 
 import os
 import requests
-import google.generativeai as genai
 from dotenv import load_dotenv
 from datetime import datetime
+from google import genai
+from google.genai import types
 
-# Load environment variables from .env file
 load_dotenv()
 
 # Configuration
 GRAPH_API_URL = "https://graph.microsoft.com/v1.0/me/messages"
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-# For demo, you can also set GRAPH_ACCESS_TOKEN in .env
-ACCESS_TOKEN = os.getenv("GRAPH_ACCESS_TOKEN", "PASTE_YOUR_TOKEN_HERE")
+ACCESS_TOKEN = os.getenv("GRAPH_ACCESS_TOKEN")
 
 def fetch_unread_emails(token, limit=20):
     """Fetch unread emails from Outlook"""
@@ -47,20 +41,18 @@ def fetch_unread_emails(token, limit=20):
     return emails
 
 def prioritize_with_gemini(emails):
-    """Send emails to Gemini for prioritisation"""
-    genai.configure(api_key=GEMINI_API_KEY)
-    model = genai.GenerativeModel("gemini-1.5-flash")
+    """Send emails to Gemini for prioritization using new SDK"""
+    client = genai.Client(api_key=GEMINI_API_KEY)
     
     # Format emails for prompt
     email_text = ""
     for i, email in enumerate(emails, 1):
-        sender = email["from"]["emailAddress"]["address"]
-        subject = email["subject"]
-        preview = email.get("bodyPreview", "No preview")[:200]
+        sender = email['from']['emailAddress']['address']
+        subject = email['subject']
+        preview = email.get('bodyPreview', 'No preview')[:200]
         email_text += f"\n{i}. From: {sender}\n   Subject: {subject}\n   Preview: {preview}\n"
     
-    prompt = f"""
-You are an executive briefing agent. Below are {len(emails)} unread emails.
+    prompt = f"""You are an executive briefing agent. Below are {len(emails)} unread emails.
 
 Output:
 1. TOP 3 MUST-RESPOND - List the 3 most urgent emails.
@@ -69,11 +61,16 @@ Output:
 2. SUGGESTED ACTIONS - One action for each of the top 3.
 
 EMAILS:
-{email_text}
-"""
+{email_text}"""
     
     print("🤖 Sending to Gemini for prioritization...")
-    response = model.generate_content(prompt)
+    
+    # Use gemini-2.0-flash (fast, efficient, widely available)
+    response = client.models.generate_content(
+        model='gemini-flash-latest',
+        contents=prompt
+    )
+    
     print("✅ Prioritization complete")
     return response.text
 
@@ -93,22 +90,18 @@ def save_briefing(briefing, email_count):
     return filename
 
 def main():
-    print("\n" + "=" * 50)
+    print("\n" + "="*50)
     print("🤖 CEO BRIEFING AGENT (EMAIL ONLY)")
-    print("=" * 50 + "\n")
+    print("="*50 + "\n")
     
-    if not GEMINI_API_KEY or GEMINI_API_KEY == "your_gemini_api_key_here":
-        print("❌ Error: GEMINI_API_KEY not configured properly")
-        print("1. Copy .env.example to .env")
-        print("2. Add your Gemini API key to .env")
-        print("3. Get a key from: https://aistudio.google.com/app/apikey")
+    if not GEMINI_API_KEY:
+        print("❌ Error: GEMINI_API_KEY not found in .env file")
+        print("Add: GEMINI_API_KEY=your_key_here")
         return
     
-    if not ACCESS_TOKEN or ACCESS_TOKEN == "PASTE_YOUR_TOKEN_HERE":
+    if not ACCESS_TOKEN or ACCESS_TOKEN == "PASTE_YOUR_GRAPH_EXPLORER_TOKEN_HERE":
         print("❌ Error: GRAPH_ACCESS_TOKEN not configured")
-        print("1. Go to: https://developer.microsoft.com/en-us/graph/graph-explorer")
-        print("2. Sign in and copy the Access Token")
-        print("3. Add it to .env as GRAPH_ACCESS_TOKEN=your_token")
+        print("Get a fresh token from Graph Explorer")
         return
     
     emails = fetch_unread_emails(ACCESS_TOKEN)
@@ -119,13 +112,13 @@ def main():
     
     briefing = prioritize_with_gemini(emails)
     
-    print("\n" + "=" * 50)
+    print("\n" + "="*50)
     print("📋 BRIEFING")
-    print("=" * 50 + "\n")
+    print("="*50 + "\n")
     print(briefing)
     
     save_briefing(briefing, len(emails))
     print("\n✅ Demo complete!")
 
 if __name__ == "__main__":
-    main()
+    main()    
