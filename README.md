@@ -72,12 +72,12 @@ python agent.py
 ## Project Structure
 
 ceo-briefing-agent/
-├── .gitignore          # Excludes secrets, venv, etc.
-├── .env.example        # Template for secrets (safe to commit)
-├── LICENSE             # MIT license
-├── README.md           # This file
-├── requirements.txt    # Python dependencies
-└── agent.py            # Main agent script
+|-- .gitignore # Excludes secrets, venv, etc.
+|-- .env.example # Template for secrets (safe to commit)
+|-- LICENSE # MIT license
+|-- README.md # This file
+|-- requirements.txt # Python dependencies
+`-- agent.py # Main agent script
 
 ## Sample Output
 
