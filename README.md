@@ -69,8 +69,6 @@ python agent.py
 - Tokens expire in 60 minutes — refresh as needed
 - This script processes emails in memory only — no storage
 
-## Project Structure
-
 ceo-briefing-agent/
 ├── .gitignore          # Excludes secrets, venv, etc.
 ├── .env.example        # Template for secrets (safe to commit)
