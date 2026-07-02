@@ -2,6 +2,10 @@
 
 AI agent that fetches unread emails via Microsoft Graph API and generates a daily briefing using Google Gemini.
 
+![Python](https://img.shields.io/badge/Python-3.9%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![Google Gemini](https://img.shields.io/badge/Google_Gemini-8E75B2?style=for-the-badge&logo=googlegemini&logoColor=white)
+![Microsoft Graph](https://img.shields.io/badge/Microsoft_Graph-5E5E5E?style=for-the-badge&logo=microsoft&logoColor=white)
+
 ## Prerequisites
 
 - Python 3.9+
